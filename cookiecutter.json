@@ -1,0 +1,8 @@
+{
+    "directory_name": "api",
+    "project_name": "Boilerplate NestJS REST API",
+    "db_user": "postgres",
+    "db_pwd": "postgres",
+    "db_name": "db_api",
+    "db_host": "localhost"
+}

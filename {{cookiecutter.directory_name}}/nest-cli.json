@@ -1,0 +1,56 @@
+{
+    "collection": "@nestjs/schematics",
+    "sourceRoot": "apps/{{cookiecutter.directory_name}}/src",
+    "monorepo": true,
+    "root": "apps/{{cookiecutter.directory_name}}",
+    "compilerOptions": {
+        "plugins": [
+            {
+                "name": "@nestjs/swagger",
+                "options": {
+                    "dtoFileNameSuffix": [".dto.ts", ".entity.ts", ".response.ts"]
+                }
+            }
+        ],
+        "webpack": true,
+        "tsConfigPath": "apps/{{cookiecutter.directory_name}}/tsconfig.app.json"
+    },
+    "projects": {
+        "{{cookiecutter.directory_name}}": {
+            "type": "application",
+            "root": "apps/{{cookiecutter.directory_name}}",
+            "entryFile": "main",
+            "sourceRoot": "apps/{{cookiecutter.directory_name}}/src",
+            "compilerOptions": {
+                "tsConfigPath": "apps/{{cookiecutter.directory_name}}/tsconfig.app.json"
+            }
+        },
+        "api": {
+            "type": "application",
+            "root": "apps/api",
+            "entryFile": "main",
+            "sourceRoot": "apps/api/src",
+            "compilerOptions": {
+                "tsConfigPath": "apps/api/tsconfig.app.json"
+            }
+        },
+        "core": {
+            "type": "library",
+            "root": "libs/core",
+            "entryFile": "index",
+            "sourceRoot": "libs/core/src",
+            "compilerOptions": {
+                "tsConfigPath": "libs/core/tsconfig.lib.json"
+            }
+        },
+        "db": {
+            "type": "library",
+            "root": "libs/db",
+            "entryFile": "index",
+            "sourceRoot": "libs/db/src",
+            "compilerOptions": {
+                "tsConfigPath": "libs/db/tsconfig.lib.json"
+            }
+        }
+    }
+}

@@ -1,0 +1,24 @@
+stages:
+  - setup
+  - test
+  - build
+  - push
+
+cache:
+  key: '$CI_PROJECT_DIR-$CI_COMMIT_REF_SLUG'
+  paths:
+    - node_modules/
+    - .yarn
+
+Setup:
+  stage: setup
+  image: node:lts
+  script:
+    - yarn install --frozen-lockfile
+  tags:
+    - docker
+
+# The reason why it's a bit junky, is because you can't apply variables to a template, it is just an include of the file content
+include:
+  - local: '/.gitlab-ci.test.yml'
+  - local: '/.gitlab-ci.docker.yml'

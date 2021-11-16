@@ -1,0 +1,14 @@
+Test:lint:
+  stage: test
+  image: node:lts
+  allow_failure: false
+  script:
+    - yarn run lint
+  tags:
+    - docker
+  cache:
+    key: '$CI_PROJECT_DIR-$CI_COMMIT_REF_SLUG'
+    paths:
+      - node_modules/
+      - .yarn\
+    policy: pull-push
