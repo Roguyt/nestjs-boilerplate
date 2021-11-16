@@ -1,6 +1,6 @@
 image: docker:18
 
-Build:api:
+Build:{{cookiecutter.directory_name}}:
   stage: build
   variables:
     IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
@@ -17,7 +17,7 @@ Build:api:
       --build-arg VCS_URL=$CI_PROJECT_URL
       --cache-from $IMAGE_TAG
       --tag $IMAGE_TAG
-      -f Dockerfile.api
+      -f Dockerfile.{{cookiecutter.directory_name}}
       .
     - docker push $IMAGE_TAG
   needs: []
@@ -62,7 +62,7 @@ Build:worker:
 #    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:latest
 #    # And we push it.
 #    - docker push $CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:latest
-#  needs: ['Build:api', 'Build:worker', 'Test:lint']
+#  needs: ['Build:{{cookiecutter.directory_name}}', 'Build:worker', 'Test:lint']
 #
 ## Finally, the goal here is to Docker tag any Git tag
 ## GitLab will start a new pipeline every time a Git tag is created, which is pretty awesome
