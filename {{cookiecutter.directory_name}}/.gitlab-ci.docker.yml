@@ -20,29 +20,7 @@ Build:{{cookiecutter.directory_name}}:
       -f Dockerfile.{{cookiecutter.directory_name}}
       .
     - docker push $IMAGE_TAG
-  needs: []
 
-Build:worker:
-  stage: build
-  variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE:worker-$CI_COMMIT_REF_SLUG
-  services:
-    - docker:dind
-  before_script:
-    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
-  script:
-    - docker pull $IMAGE_TAG || true
-    - >
-      docker build
-      --pull
-      --build-arg VCS_REF=$CI_COMMIT_SHA
-      --build-arg VCS_URL=$CI_PROJECT_URL
-      --cache-from $IMAGE_TAG
-      --tag $IMAGE_TAG
-      -f Dockerfile.worker
-      .
-    - docker push $IMAGE_TAG
-  needs: []
 ## Here, the goal is to tag the "master" branch as "latest"
 #Push latest:
 #  stage: push
