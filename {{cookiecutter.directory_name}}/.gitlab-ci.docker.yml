@@ -16,47 +16,47 @@ Build:{{cookiecutter.directory_name}}:
       --build-arg VCS_REF=$CI_COMMIT_SHA
       --build-arg VCS_URL=$CI_PROJECT_URL
       --cache-from $IMAGE_TAG
-      --tag $IMAGE_TAG
+      --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
       -f Dockerfile.{{cookiecutter.directory_name}}
       .
-    - docker push $IMAGE_TAG
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
 
 ## Here, the goal is to tag the "master" branch as "latest"
-#Push latest:
-#  stage: push
-#  variables:
-#    GIT_STRATEGY: none
-#  except:
-#    - tags
-#  services:
-#    - docker:dind
-#  before_script:
-#    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
-#  script:
-#    # Because we have no guarantee that this job will be picked up by the same runner
-#    # that built the image in the previous step, we pull it again locally
-#    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-#    # Then we tag it "latest"
-#    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:latest
-#    # And we push it.
-#    - docker push $CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:latest
-#  needs: ['Build:{{cookiecutter.directory_name}}', 'Build:worker', 'Test:lint']
-#
-## Finally, the goal here is to Docker tag any Git tag
-## GitLab will start a new pipeline every time a Git tag is created, which is pretty awesome
-#Push tag:
-#  stage: push
-#  variables:
-#    # Again, we do not need the source code here. Just playing with Docker.
-#    GIT_STRATEGY: none
-#  only:
-#    # We want this job to be run on tags only.
-#    - tags
-#  services:
-#    - docker:dind
-#  before_script:
-#    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
-#  script:
-#    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-#    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
-#    - docker push $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+Push latest:
+  stage: push
+  variables:
+    GIT_STRATEGY: none
+  except:
+    - tags
+  services:
+    - docker:dind
+  before_script:
+    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+  script:
+    # Because we have no guarantee that this job will be picked up by the same runner
+    # that built the image in the previous step, we pull it again locally
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    # Then we tag it "latest"
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:latest
+    # And we push it.
+    - docker push $CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:latest
+  needs: ['Build:{{cookiecutter.directory_name}}', 'Test:lint']
+
+# Finally, the goal here is to Docker tag any Git tag
+# GitLab will start a new pipeline every time a Git tag is created, which is pretty awesome
+Push tag:
+  stage: push
+  variables:
+    # Again, we do not need the source code here. Just playing with Docker.
+    GIT_STRATEGY: none
+  only:
+    # We want this job to be run on tags only.
+    - tags
+  services:
+    - docker:dind
+  before_script:
+    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+    - docker push $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
